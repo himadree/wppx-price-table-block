@@ -5,7 +5,10 @@ import {
 import { registerBlockType } from '@wordpress/blocks';
 import {
 	PanelBody,
-	RangeControl
+	RangeControl,
+	Panel, 
+	PanelRow,
+	SelectControl
 } from '@wordpress/components';
 import './editor.scss';
 import './style.scss';
@@ -69,13 +72,17 @@ registerBlockType( 'wppx-price-table-block/block-wppx-price-table-block', {
 			type: 'string',
 			default: '#FFFFFF',
 		},
+		style: {
+			type: 'string',
+			default: 'style-1',
+		},
 	},
 
 	/**
 	 * The edit function describes the structure of your block in the context of the editor.
 	 */
 	edit: ( props ) => {
-		const { attributes: { heading, features, amount, signup }, setAttributes } = props;
+		const { attributes: { heading, features, amount, signup, style }, setAttributes } = props;
 		const colorSample = [
 			{ color: '#F74197', name: 'Default' },
 			{ color: '#F0F8FF', name: 'AliceBlue' },
@@ -109,6 +116,21 @@ registerBlockType( 'wppx-price-table-block/block-wppx-price-table-block', {
 
 		return ( [
 			<InspectorControls>
+				<PanelBody title="Select Style" initialOpen={ false }>
+					<PanelRow>Select More Style</PanelRow>
+					<SelectControl
+						label="Size"
+						value={ style }
+						options={ [
+							{ label: 'Style One', value: 'style-1' },
+							{ label: 'Style Two', value: 'style-2' },
+							{ label: 'Style Three', value: 'style-3' },
+						] }
+						onChange={ ( value ) => {setAttributes({
+							style: value
+						})}}
+					/>
+				</PanelBody>
 				<PanelBody>
 					<PanelColorSettings
 						title={ __( 'Text Color' ) }
@@ -160,47 +182,57 @@ registerBlockType( 'wppx-price-table-block/block-wppx-price-table-block', {
 					/>
 				</PanelBody>
 			</InspectorControls>,
-			<div className="wppx_pricetable" style={ textStyle }>
-				<div className="wppx_pricetable__card">
-					<div className="wppx_pricetable__card__header">
 
-						<RichText
-							tagName="h3"
-							className="title"
-							value={ heading }
-							placeholder="Standard"
-							onChange={ ( heading ) => setAttributes( { heading } ) }
-						/>
-					</div>
-					<div className="wppx_pricetable__card__content" style={ borderStyle }>
-
-						<RichText
-							tagName="ul"
-							multiline="li"
-							value={ features }
-							placeholder={ __( 'Enter plan features...' ) }
-							onChange={ ( features ) => setAttributes( { features } ) }
-						/>
-						<div className="wppx_pricetable__card__content__value">
+			<div className='wrapper'>
+				{style == 'style-1' && (
+					<div className="wppx_pricetable" style={ textStyle }>
+						<div className="wppx_pricetable__card">
+							<div className="wppx_pricetable__card__header">
+								<RichText
+									tagName="h3"
+									className="title"
+									value={ heading }
+									placeholder="Standard"
+									onChange={ ( heading ) => setAttributes( { heading } ) }
+								/>
+							</div>
+							<div className="wppx_pricetable__card__content" style={ borderStyle }>
+								<RichText
+									tagName="ul"
+									multiline="li"
+									value={ features }
+									placeholder={ __( 'Enter plan features...' ) }
+									onChange={ ( features ) => setAttributes( { features } ) }
+								/>
+								<div className="wppx_pricetable__card__content__value">
+									<RichText
+										tagName="span"
+										className="amount"
+										placeholder="$10"
+										value={ amount }
+										onChange={ ( amount ) => setAttributes( { amount } ) }
+									/>
+								</div>
+							</div>
+						</div>
+						<div className="wppx_pricetable__signup" style={ buttonBGStyle }>
 							<RichText
 								tagName="span"
-								className="amount"
-								placeholder="$10"
-								value={ amount }
-								onChange={ ( amount ) => setAttributes( { amount } ) }
+								placeholder="Sugn Up"
+								value={ signup }
+								onChange={ ( signup ) => setAttributes( { signup } ) }
+								style={ buttonTextStyle }
 							/>
 						</div>
 					</div>
-				</div>
-				<div className="wppx_pricetable__signup" style={ buttonBGStyle }>
-					<RichText
-						tagName="span"
-						placeholder="Sugn Up"
-						value={ signup }
-						onChange={ ( signup ) => setAttributes( { signup } ) }
-						style={ buttonTextStyle }
-					/>
-				</div>
+				)}
+				{style == 'style-2' && (
+					<h1>Style 2</h1>
+				)}
+				{style == 'style-3' && (
+					<h1>Style 3</h1>
+				)}
+				
 			</div>,
 		] );
 	},
